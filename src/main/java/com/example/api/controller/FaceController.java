@@ -12,13 +12,15 @@ public class FaceController {
     @Autowired
     private AzureFaceService azureFaceService;
 
-    // ✅ Register face → returns faceId
+    // ✅ 顔を登録するエンドポイント（Face API を使用）
+    // 画像URLから顔を検出し、faceId を返却する
     @PostMapping("/register")
     public String registerFace(@RequestParam String imageUrl) {
         return azureFaceService.detectFace(imageUrl);
     }
 
-    // ✅ Verify 2 faces → returns true/false
+    // ✅ 2つの顔を比較するエンドポイント
+    // faceId1 と faceId2 を照合し、同一人物なら true を返す
     @PostMapping("/verify")
     public boolean verifyFaces(@RequestParam String faceId1,
                                @RequestParam String faceId2) {
