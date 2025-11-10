@@ -68,7 +68,7 @@ public class AuthController {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             return ResponseEntity.badRequest().body("Username already exists");
         }
-
+        
         // 新規ユーザーの作成
         User user = new User();
         user.setUsername(request.getUsername());
