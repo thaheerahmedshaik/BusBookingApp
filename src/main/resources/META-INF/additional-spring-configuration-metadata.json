@@ -1,0 +1,49 @@
+{
+  "properties": [
+    {
+      "name": "azure.openai.endpoint",
+      "type": "java.lang.String",
+      "description": "Azure OpenAI endpoint URL (e.g., https://<resource-name>.openai.azure.com)"
+    },
+    {
+      "name": "azure.openai.api-version",
+      "type": "java.lang.String",
+      "description": "Azure OpenAI API version (e.g., 2023-05-15)"
+    },
+    {
+      "name": "azure.openai.deployment-id",
+      "type": "java.lang.String",
+      "description": "Deployment ID of the Azure OpenAI model (e.g., gpt-35-turbo)"
+    },
+    {
+      "name": "azure.openai.api-key",
+      "type": "java.lang.String",
+      "description": "API key used to authenticate with Azure OpenAI service"
+    },
+    {
+      "name": "twilio.account.sid",
+      "type": "java.lang.String",
+      "description": "Twilio account SID"
+    },
+    {
+      "name": "twilio.auth.token",
+      "type": "java.lang.String",
+      "description": "Twilio authentication token"
+    },
+    {
+      "name": "twilio.whatsapp.from",
+      "type": "java.lang.String",
+      "description": "Twilio WhatsApp sender number (e.g., whatsapp:+14155238886)"
+    },
+    {
+      "name": "azure.face.key",
+      "type": "java.lang.String",
+      "description": "Azure Cognitive Services Face API key"
+    },
+    {
+      "name": "azure.face.endpoint",
+      "type": "java.lang.String",
+      "description": "Azure Cognitive Services Face API endpoint URL (e.g., https://<resource>.cognitiveservices.azure.com)"
+    }
+  ]
+}
