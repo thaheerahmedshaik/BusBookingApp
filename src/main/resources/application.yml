@@ -1,0 +1,29 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,circuitbreakers
+  endpoint:
+    health:
+      show-details: always
+
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      busServiceCB:
+        slidingWindowSize: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5s
+      seatServiceCB:
+        slidingWindowSize: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5s
+      chatServiceCB:
+        slidingWindowSize: 3
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+      whatsappServiceCB:
+        slidingWindowSize: 3
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
