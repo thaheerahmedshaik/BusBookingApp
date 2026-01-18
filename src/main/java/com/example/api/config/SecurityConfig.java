@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/face/**").permitAll()
                 .requestMatchers("/api/whatsapp/**").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
+                .requestMatchers("/api/offers/**").permitAll()
 
                 // ✅ Allow Swagger / OpenAPI endpoints
                 .requestMatchers(
