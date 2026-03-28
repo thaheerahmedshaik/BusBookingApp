@@ -2,14 +2,23 @@ package com.example.api.model;
 
 import java.util.List;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
 // Main DTO for booking seats
 public class BookingDTO {
 
-    private Long busId;                   // Bus ID
-    private List<Long> seatIds;           // Selected seat IDs
-    private String boardingPoint;         // Boarding point
-    private String droppingPoint;         // Dropping point
-    private List<BookingRequestDTO> passengers; // Passenger details
+	 @NotNull(message = "Bus ID is required")
+	    private Long busId;
+
+	    @NotEmpty(message = "At least one seat must be selected")
+	    private List<Long> seatIds;
+
+	    private String boardingPoint;
+	    private String droppingPoint;
+
+	    @NotEmpty(message = "Passenger details are required")
+	    private List<BookingRequestDTO> passengers;
 
     // Getters and setters
     public Long getBusId() { return busId; }
