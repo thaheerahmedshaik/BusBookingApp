@@ -16,8 +16,10 @@ public class MailTestRunner implements CommandLineRunner {
     /**
      * アプリケーション起動時に自動的に実行される処理。
      * Gmail SMTP の設定が正しく動作しているかを確認するため、
-     * テストメールを送信する。
+     * テストメールを送信する。it is important to note
      */
+    
+    
     @Override
     public void run(String... args) {
         try {
