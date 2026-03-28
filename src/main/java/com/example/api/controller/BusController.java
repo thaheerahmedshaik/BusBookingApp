@@ -3,7 +3,7 @@ package com.example.api.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import jakarta.validation.Valid;
 import com.example.api.model.*;
 import com.example.api.repository.BusRepository;
 import com.example.api.service.BusService;
@@ -110,23 +110,21 @@ public class BusController {
     // 座席予約処理
     @Operation(summary = "Book seats on a bus", description = "Book seats by providing busId, seatIds, and passenger details")
     @PostMapping("/bookSeat")
-    public ResponseEntity<?> bookSeat(@RequestBody BookingDTO dto) {
+    public ResponseEntity<?> bookSeat(@Valid @RequestBody BookingDTO dto) {
         try {
             // バス取得
-            Bus bus = busService.getBusById(dto.getBusId());
-            if (bus == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bus not found");
+          Bus bus = busService.getBusById(dto.getBusId());
+        if (bus == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Bus not found", 400));
 
-            // 座席チェック
-            if (dto.getSeatIds() == null || dto.getSeatIds().isEmpty())
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No seats selected");
+        if (dto.getSeatIds() == null || dto.getSeatIds().isEmpty())
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("No seats selected", 400));
 
-            List<Seat> seats = seatService.getSeatsByIds(dto.getSeatIds());
-            if (seats.size() != dto.getSeatIds().size() || seats.stream().anyMatch(s -> !s.isAvailable()))
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("One or more seats are not available");
+        List<Seat> seats = seatService.getSeatsByIds(dto.getSeatIds());
+        if (seats.size() != dto.getSeatIds().size() || seats.stream().anyMatch(s -> !s.isAvailable()))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("One or more seats are not available", 400));
 
-            // 乗客数チェック
-            if (dto.getPassengers() == null || dto.getPassengers().size() != seats.size())
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Passenger count must match selected seats");
+        if (dto.getPassengers() == null || dto.getPassengers().size() != seats.size())
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Passenger count must match selected seats", 400));
 
             // 予約作成
             Booking booking = new Booking();
