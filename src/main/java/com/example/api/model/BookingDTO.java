@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 // Main DTO for booking seats
 public class BookingDTO {
 
-	 @NotNull(message = "Bus ID is required")
+	    @NotNull(message = "Bus ID is required")
 	    private Long busId;
 
 	    @NotEmpty(message = "At least one seat must be selected")

@@ -1,5 +1,6 @@
 package com.example.api.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +30,6 @@ public class BusController {
     private final SeatService seatService;
     private final BusPointService busPointService;
 
-
-    // コンストラクタ依存性注入
     public BusController(BusRepository busRepository,
                          BusService busService,
                          SeatService seatService,
@@ -45,16 +44,14 @@ public class BusController {
     @Operation(summary = "Get all departure cities", description = "Returns a list of distinct departure cities")
     @GetMapping("/fromCities")
     public ResponseEntity<List<String>> getFromCities() {
-        List<String> fromCities = busRepository.findDistinctFromCities();
-        return ResponseEntity.ok(fromCities);
+        return ResponseEntity.ok(busRepository.findDistinctFromCities());
     }
 
     // 到着都市一覧取得
     @Operation(summary = "Get all destination cities", description = "Returns a list of distinct destination cities")
     @GetMapping("/toCities")
     public ResponseEntity<List<String>> getToCities() {
-        List<String> toCities = busRepository.findDistinctToCities();
-        return ResponseEntity.ok(toCities);
+        return ResponseEntity.ok(busRepository.findDistinctToCities());
     }
 
     // バス検索（都市＋日付オプション）
@@ -92,43 +89,39 @@ public class BusController {
     @GetMapping("/id/{busId}")
     public ResponseEntity<Bus> getBusById(@PathVariable Long busId) {
         Bus bus = busService.getBusById(busId);
-        if (bus != null) {
-            return ResponseEntity.ok(bus);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+        return (bus != null) ? ResponseEntity.ok(bus)
+                             : ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
     // バスの座席一覧取得
     @Operation(summary = "Get seats for a bus", description = "Returns list of seats for a given bus ID")
     @GetMapping("/{busId}/seats")
     public ResponseEntity<List<Seat>> getSeatsForBus(@PathVariable Long busId) {
-        List<Seat> seats = seatService.getSeatsByBusId(busId);
-        return ResponseEntity.ok(seats);
+        return ResponseEntity.ok(seatService.getSeatsByBusId(busId));
     }
 
     // 座席予約処理
     @Operation(summary = "Book seats on a bus", description = "Book seats by providing busId, seatIds, and passenger details")
     @PostMapping("/bookSeat")
-    public ResponseEntity<?> bookSeat(@RequestBody BookingDTO dto) {
+    public ResponseEntity<?> bookSeat(@Valid @RequestBody BookingDTO dto) {
         try {
-            // バス取得
             Bus bus = busService.getBusById(dto.getBusId());
-            if (bus == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bus not found");
+            if (bus == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                                  .body(new ErrorResponse("Bus not found", 400));
 
-            // 座席チェック
             if (dto.getSeatIds() == null || dto.getSeatIds().isEmpty())
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No seats selected");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                     .body(new ErrorResponse("No seats selected", 400));
 
             List<Seat> seats = seatService.getSeatsByIds(dto.getSeatIds());
             if (seats.size() != dto.getSeatIds().size() || seats.stream().anyMatch(s -> !s.isAvailable()))
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("One or more seats are not available");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                     .body(new ErrorResponse("One or more seats are not available", 400));
 
-            // 乗客数チェック
             if (dto.getPassengers() == null || dto.getPassengers().size() != seats.size())
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Passenger count must match selected seats");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                     .body(new ErrorResponse("Passenger count must match selected seats", 400));
 
-            // 予約作成
             Booking booking = new Booking();
             booking.setBusId(bus.getId());
             booking.setBusName(bus.getBusName());
@@ -143,9 +136,8 @@ public class BusController {
             double totalAmount = seats.stream().mapToDouble(Seat::getPrice).sum();
             booking.setTotalAmount(totalAmount);
             booking.setPrice(totalAmount);
-            booking.setTravelDate(LocalDate.now());
+            booking.setTravelDate(bus.getDate() != null ? bus.getDate() : LocalDate.now());
 
-            // ✅ 乗客追加
             List<BookingRequest> passengers = new ArrayList<>();
             for (int i = 0; i < dto.getPassengers().size(); i++) {
                 BookingRequestDTO p = dto.getPassengers().get(i);
@@ -160,7 +152,6 @@ public class BusController {
             }
             booking.setPassengers(passengers);
 
-            // ✅ 予約保存＋座席更新
             Booking savedBooking = busService.saveBooking(booking, seats);
             seats.forEach(seat -> {
                 seat.setAvailable(false);
@@ -170,7 +161,8 @@ public class BusController {
             return ResponseEntity.ok(savedBooking);
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Booking failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body(new ErrorResponse("Booking failed: " + e.getMessage(), 500));
         }
     }
 
