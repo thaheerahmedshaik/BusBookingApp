@@ -1,4 +1,6 @@
 package com.example.api.model;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.util.List;
 
