@@ -18,8 +18,7 @@ public class BookingDTO {
 	    private String droppingPoint;
 
 	    @NotEmpty(message = "Passenger details are required")
-	    private List<BookingRequestDTO> passengers;
-	    
+	    private List<BookingRequestDTO> passengers; 
 
     // Getters and setters
     public Long getBusId() { return busId; }
