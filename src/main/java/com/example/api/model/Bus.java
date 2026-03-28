@@ -36,79 +36,143 @@ public class Bus {
     @Column(name = "date")
     private LocalDate date;
 
+    
     @Column(name="seat_type")
     private String seatType;
-
+    
     @Column(name="rating")
     private String rating;
-
+    
     @Column(name="amenities")
     private String amenities;
-
+    
     // Default constructor (required by Hibernate)
-    public Bus() {}
-
-    // All-args constructor
-    public Bus(Long id, String busName, String fromCity, String toCity,
-               LocalDateTime departureTime, LocalDateTime arrivalTime,
-               String duration, double price, LocalDate date,
-               String seatType, String rating, String amenities) {
-        this.id = id;
-        this.busName = busName;
-        this.fromCity = fromCity;
-        this.toCity = toCity;
-        this.departureTime = departureTime;
-        this.arrivalTime = arrivalTime;
-        this.duration = duration;
-        this.price = price;
-        this.date = date;
-        this.seatType = seatType;
-        this.rating = rating;
-        this.amenities = amenities;
+    public Bus() {
     }
 
-    // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+	public Long getId() {
+		return id;
+	}
 
-    public String getBusName() { return busName; }
-    public void setBusName(String busName) { this.busName = busName; }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public String getFromCity() { return fromCity; }
-    public void setFromCity(String fromCity) { this.fromCity = fromCity; }
+	public String getBusName() {
+		return busName;
+	}
 
-    public String getToCity() { return toCity; }
-    public void setToCity(String toCity) { this.toCity = toCity; }
+	public void setBusName(String busName) {
+		this.busName = busName;
+	}
 
-    public LocalDateTime getDepartureTime() { return departureTime; }
-    public void setDepartureTime(LocalDateTime departureTime) { this.departureTime = departureTime; }
+	public String getFromCity() {
+		return fromCity;
+	}
 
-    public LocalDateTime getArrivalTime() { return arrivalTime; }
-    public void setArrivalTime(LocalDateTime arrivalTime) { this.arrivalTime = arrivalTime; }
+	public void setFromCity(String fromCity) {
+		this.fromCity = fromCity;
+	}
 
-    public String getDuration() { return duration; }
-    public void setDuration(String duration) { this.duration = duration; }
+	public String getToCity() {
+		return toCity;
+	}
 
-    public double getPrice() { return price; }
-    public void setPrice(double price) { this.price = price; }
+	public void setToCity(String toCity) {
+		this.toCity = toCity;
+	}
 
-    public LocalDate getDate() { return date; }
-    public void setDate(LocalDate date) { this.date = date; }
+	public LocalDateTime getDepartureTime() {
+		return departureTime;
+	}
 
-    public String getSeatType() { return seatType; }
-    public void setSeatType(String seatType) { this.seatType = seatType; }
+	public void setDepartureTime(LocalDateTime departureTime) {
+		this.departureTime = departureTime;
+	}
 
-    public String getRating() { return rating; }
-    public void setRating(String rating) { this.rating = rating; }
+	public LocalDateTime getArrivalTime() {
+		return arrivalTime;
+	}
 
-    public String getAmenities() { return amenities; }
-    public void setAmenities(String amenities) { this.amenities = amenities; }
+	public void setArrivalTime(LocalDateTime arrivalTime) {
+		this.arrivalTime = arrivalTime;
+	}
 
-    @Override
-    public String toString() {
-        return "Bus [id=" + id + ", busName=" + busName + ", fromCity=" + fromCity + ", toCity=" + toCity
-                + ", departureTime=" + departureTime + ", arrivalTime=" + arrivalTime + ", duration=" + duration
-                + ", price=" + price + ", date=" + date + ", seatType=" + seatType + ", rating=" + rating
-                + ", amenities=" + amenities + "]";
-    }
+	public String getDuration() {
+		return duration;
+	}
+
+	public void setDuration(String duration) {
+		this.duration = duration;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public LocalDate getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
+
+	public String getSeatType() {
+		return seatType;
+	}
+
+	public void setSeatType(String seatType) {
+		this.seatType = seatType;
+	}
+
+	public String getRating() {
+		return rating;
+	}
+
+	public void setRating(String rating) {
+		this.rating = rating;
+	}
+
+	public String getAmenities() {
+		return amenities;
+	}
+
+	public void setAmenities(String amenities) {
+		this.amenities = amenities;
+	}
+
+	public Bus(Long id, String busName, String fromCity, String toCity, LocalDateTime departureTime,
+			LocalDateTime arrivalTime, String duration, double price, LocalDate date, String seatType, String rating,
+			String amenities) {
+		super();
+		this.id = id;
+		this.busName = busName;
+		this.fromCity = fromCity;
+		this.toCity = toCity;
+		this.departureTime = departureTime;
+		this.arrivalTime = arrivalTime;
+		this.duration = duration;
+		this.price = price;
+		this.date = date;
+		this.seatType = seatType;
+		this.rating = rating;
+		this.amenities = amenities;
+	}
+
+	@Override
+	public String toString() {
+		return "Bus [id=" + id + ", busName=" + busName + ", fromCity=" + fromCity + ", toCity=" + toCity
+				+ ", departureTime=" + departureTime + ", arrivalTime=" + arrivalTime + ", duration=" + duration
+				+ ", price=" + price + ", date=" + date + ", seatType=" + seatType + ", rating=" + rating
+				+ ", amenities=" + amenities + "]";
+	}
+
+
+
+   
 }

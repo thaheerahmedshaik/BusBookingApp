@@ -40,28 +40,24 @@ public class BusController {
         this.busPointService = busPointService;
     }
 
-    // 出発都市一覧取得
-    @Operation(summary = "Get all departure cities", description = "Returns a list of distinct departure cities")
+    @Operation(summary = "Get all departure cities")
     @GetMapping("/fromCities")
     public ResponseEntity<List<String>> getFromCities() {
         return ResponseEntity.ok(busRepository.findDistinctFromCities());
     }
 
-    // 到着都市一覧取得
-    @Operation(summary = "Get all destination cities", description = "Returns a list of distinct destination cities")
+    @Operation(summary = "Get all destination cities")
     @GetMapping("/toCities")
     public ResponseEntity<List<String>> getToCities() {
         return ResponseEntity.ok(busRepository.findDistinctToCities());
     }
 
-    // バス検索（都市＋日付オプション）
-    @Operation(summary = "Search buses", description = "Search buses by from city, to city and optional date (yyyy-MM-dd)")
+    @Operation(summary = "Search buses")
     @GetMapping("/search")
     public ResponseEntity<List<Bus>> searchBuses(
             @RequestParam String from,
             @RequestParam String to,
             @RequestParam(required = false) String date) {
-
         try {
             List<Bus> buses;
             if (date != null && !date.isEmpty()) {
@@ -71,21 +67,18 @@ public class BusController {
                 buses = busRepository.findByFromCityAndToCity(from, to);
             }
             return ResponseEntity.ok(buses);
-
         } catch (DateTimeParseException e) {
             return ResponseEntity.badRequest().body(null);
         }
     }
 
-    // 全バス取得
-    @Operation(summary = "Get all buses", description = "Returns a list of all buses")
+    @Operation(summary = "Get all buses")
     @GetMapping
     public ResponseEntity<List<Bus>> getAllBuses() {
         return ResponseEntity.ok(busService.getAllBuses());
     }
 
-    // ID によるバス取得
-    @Operation(summary = "Get bus by ID", description = "Returns details of a bus by its ID")
+    @Operation(summary = "Get bus by ID")
     @GetMapping("/id/{busId}")
     public ResponseEntity<Bus> getBusById(@PathVariable Long busId) {
         Bus bus = busService.getBusById(busId);
@@ -93,34 +86,37 @@ public class BusController {
                              : ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
-    // バスの座席一覧取得
-    @Operation(summary = "Get seats for a bus", description = "Returns list of seats for a given bus ID")
+    @Operation(summary = "Get seats for a bus")
     @GetMapping("/{busId}/seats")
     public ResponseEntity<List<Seat>> getSeatsForBus(@PathVariable Long busId) {
         return ResponseEntity.ok(seatService.getSeatsByBusId(busId));
     }
 
-    // 座席予約処理
-    @Operation(summary = "Book seats on a bus", description = "Book seats by providing busId, seatIds, and passenger details")
+    @Operation(summary = "Book seats on a bus")
     @PostMapping("/bookSeat")
     public ResponseEntity<?> bookSeat(@Valid @RequestBody BookingDTO dto) {
         try {
             Bus bus = busService.getBusById(dto.getBusId());
-            if (bus == null) return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                                  .body(new ErrorResponse("Bus not found", 400));
-
-            if (dto.getSeatIds() == null || dto.getSeatIds().isEmpty())
+            if (bus == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                     .body(new ErrorResponse("No seats selected", 400));
+                        .body(new ErrorResponse("Bus not found", 400));
+            }
+
+            if (dto.getSeatIds() == null || dto.getSeatIds().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ErrorResponse("No seats selected", 400));
+            }
 
             List<Seat> seats = seatService.getSeatsByIds(dto.getSeatIds());
-            if (seats.size() != dto.getSeatIds().size() || seats.stream().anyMatch(s -> !s.isAvailable()))
+            if (seats.size() != dto.getSeatIds().size() || seats.stream().anyMatch(s -> !s.isAvailable())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                     .body(new ErrorResponse("One or more seats are not available", 400));
+                        .body(new ErrorResponse("One or more seats are not available", 400));
+            }
 
-            if (dto.getPassengers() == null || dto.getPassengers().size() != seats.size())
+            if (dto.getPassengers() == null || dto.getPassengers().size() != seats.size()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                     .body(new ErrorResponse("Passenger count must match selected seats", 400));
+                        .body(new ErrorResponse("Passenger count must match selected seats", 400));
+            }
 
             Booking booking = new Booking();
             booking.setBusId(bus.getId());
@@ -162,29 +158,25 @@ public class BusController {
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                 .body(new ErrorResponse("Booking failed: " + e.getMessage(), 500));
+                    .body(new ErrorResponse("Booking failed: " + e.getMessage(), 500));
         }
     }
 
-    // 乗車ポイント一覧取得
     @GetMapping("/{busId}/boarding")
     public List<BusPoint> getBoardingPoints(@PathVariable Long busId) {
         return busPointService.getBoardingPoints(busId);
     }
 
-    // 降車ポイント一覧取得
     @GetMapping("/{busId}/dropping")
     public List<BusPoint> getDroppingPoints(@PathVariable Long busId) {
         return busPointService.getDroppingPoints(busId);
     }
 
-    // 新しいポイント追加
     @PostMapping("/points")
     public BusPoint addPoint(@RequestBody BusPoint point) {
         return busPointService.addPoint(point);
     }
 
-    // 全ポイント取得
     @GetMapping("/{busId}/points/all")
     public List<BusPoint> getAllPoints(@PathVariable Long busId) {
         return busPointService.getAllPoints(busId);

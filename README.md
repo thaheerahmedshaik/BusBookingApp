@@ -1,2 +1,2 @@
 # BusBookingApp
-Booking App
+Booking Application

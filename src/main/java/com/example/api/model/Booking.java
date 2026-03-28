@@ -3,6 +3,7 @@ package com.example.api.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,10 +28,10 @@ public class Booking {
     private String toCity;
 
     @Column(name = "departure_time", nullable = false)
-    private String departureTime;
+    private LocalDateTime departureTime;
 
     @Column(name = "arrival_time", nullable = false)
-    private String arrivalTime;
+    private LocalDateTime arrivalTime;
 
     @Column(name = "duration", nullable = false)
     private String duration;
@@ -73,11 +74,11 @@ public class Booking {
     public String getToCity() { return toCity; }
     public void setToCity(String toCity) { this.toCity = toCity; }
 
-    public String getDepartureTime() { return departureTime; }
-    public void setDepartureTime(String departureTime) { this.departureTime = departureTime; }
+    public LocalDateTime getDepartureTime() { return departureTime; }
+    public void setDepartureTime(LocalDateTime localDateTime) { this.departureTime = localDateTime; }
 
-    public String getArrivalTime() { return arrivalTime; }
-    public void setArrivalTime(String arrivalTime) { this.arrivalTime = arrivalTime; }
+    public LocalDateTime getArrivalTime() { return arrivalTime; }
+    public void setArrivalTime(LocalDateTime arrivalTime) { this.arrivalTime = arrivalTime; }
 
     public String getDuration() { return duration; }
     public void setDuration(String duration) { this.duration = duration; }
