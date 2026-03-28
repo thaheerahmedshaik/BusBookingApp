@@ -19,6 +19,7 @@ public class BookingDTO {
 
 	    @NotEmpty(message = "Passenger details are required")
 	    private List<BookingRequestDTO> passengers;
+	    
 
     // Getters and setters
     public Long getBusId() { return busId; }
