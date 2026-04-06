@@ -1,37 +1,29 @@
 package com.example.api.model;
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotEmpty;
-
 import java.util.List;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-
-// Main DTO for booking seats
 public class BookingDTO {
 
-
-	    @NotNull(message = "Bus ID is required")
-
     @NotNull(message = "Bus ID is required")
+    private Long busId;
 
-	    private Long busId;
+    @NotEmpty(message = "At least one seat must be selected")
+    private List<String> seatCodes;   // seat codes like "A1", "C2"
 
-	    @NotEmpty(message = "At least one seat must be selected")
-	    private List<Long> seatIds;
+    private String boardingPoint;
+    private String droppingPoint;
 
-	    private String boardingPoint;
-	    private String droppingPoint;
-
-	    @NotEmpty(message = "Passenger details are required")
-	    private List<BookingRequestDTO> passengers; 
+    @NotEmpty(message = "Passenger details are required")
+    private List<BookingRequestDTO> passengers;
 
     // Getters and setters
     public Long getBusId() { return busId; }
     public void setBusId(Long busId) { this.busId = busId; }
 
-    public List<Long> getSeatIds() { return seatIds; }
-    public void setSeatIds(List<Long> seatIds) { this.seatIds = seatIds; }
+    public List<String> getSeatCodes() { return seatCodes; }
+    public void setSeatCodes(List<String> seatCodes) { this.seatCodes = seatCodes; }
 
     public String getBoardingPoint() { return boardingPoint; }
     public void setBoardingPoint(String boardingPoint) { this.boardingPoint = boardingPoint; }

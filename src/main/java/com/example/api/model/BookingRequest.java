@@ -1,7 +1,6 @@
 package com.example.api.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -18,31 +17,21 @@ public class BookingRequest {
 
     // Many passengers belong to one booking
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_id", nullable = false) // foreign key in BookingRequest table
+    @JoinColumn(name = "booking_id", nullable = false)
     @JsonBackReference
     private Booking booking;
 
-    // Optional: store seatId if needed
-    private Long seatId;
+    // ✅ Store seatCode instead of seatId
+    private String seatCode;
 
-    // Default constructor
     public BookingRequest() {}
 
-    // Constructor without booking
-    public BookingRequest(String name, int age, String phone, String state) {
+    public BookingRequest(String name, int age, String phone, String state, String seatCode) {
         this.name = name;
         this.age = age;
         this.phone = phone;
         this.state = state;
-    }
-
-    // Constructor with booking
-    public BookingRequest(String name, int age, String phone, String state, Booking booking) {
-        this.name = name;
-        this.age = age;
-        this.phone = phone;
-        this.state = state;
-        this.booking = booking;
+        this.seatCode = seatCode;
     }
 
     // Getters and setters
@@ -64,11 +53,12 @@ public class BookingRequest {
     public Booking getBooking() { return booking; }
     public void setBooking(Booking booking) { this.booking = booking; }
 
-    public Long getSeatId() { return seatId; }
-    public void setSeatId(Long seatId) { this.seatId = seatId; }
+    public String getSeatCode() { return seatCode; }
+    public void setSeatCode(String seatCode) { this.seatCode = seatCode; }
 
     @Override
     public String toString() {
-        return "BookingRequest [name=" + name + ", age=" + age + ", phone=" + phone + ", state=" + state + ", seatId=" + seatId + "]";
+        return "BookingRequest [id=" + id + ", name=" + name + ", age=" + age +
+               ", phone=" + phone + ", state=" + state + ", seatCode=" + seatCode + "]";
     }
 }

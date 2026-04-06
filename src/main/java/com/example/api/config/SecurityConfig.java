@@ -41,6 +41,8 @@ public class SecurityConfig {
                 // ✅ Public endpoints (no authentication required)
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/chat/**").permitAll()
+                .requestMatchers("/buses/confirm").permitAll()
+                
                 .requestMatchers("/api/face/**").permitAll()
                 .requestMatchers("/api/whatsapp/**").permitAll()
                 .requestMatchers("/actuator/**").permitAll()

@@ -24,5 +24,8 @@ public interface BusRepository extends JpaRepository<Bus, Long> {
     List<Bus> findByFromCityAndToCity(String fromCity, String toCity);
 
     // Search with date
+    @Query("SELECT b FROM Bus b WHERE b.fromCity = :from AND b.toCity = :to AND DATE(b.departureTime) = :date")
     List<Bus> findByFromCityAndToCityAndDate(String from, String to, LocalDate date);
+    
+
 }

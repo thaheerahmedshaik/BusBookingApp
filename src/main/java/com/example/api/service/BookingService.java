@@ -95,12 +95,11 @@
 //
 package com.example.api.service;
 
-import com.example.api.model.Booking;
-import com.example.api.model.BookingDTO;
-import com.example.api.model.BookingRequest;
-import com.example.api.model.BookingRequestDTO;
+import com.example.api.model.*;
 import com.example.api.repository.BookingRepository;
 import com.example.api.repository.BookingRequestRepository;
+import com.example.api.repository.BusRepository;
+import com.example.api.repository.SeatRepository;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import jakarta.mail.internet.MimeMessage;
@@ -118,17 +117,23 @@ import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
-    @Autowired
+
     private final BookingRepository bookingRepository;
     private final BookingRequestRepository bookingRequestRepository;
+    private final BusRepository busRepository;
+    private final SeatRepository seatRepository;
     private final JavaMailSender mailSender;
 
     @Autowired
     public BookingService(BookingRepository bookingRepository,
                           BookingRequestRepository bookingRequestRepository,
+                          BusRepository busRepository,
+                          SeatRepository seatRepository,
                           JavaMailSender mailSender) {
         this.bookingRepository = bookingRepository;
         this.bookingRequestRepository = bookingRequestRepository;
+        this.busRepository = busRepository;
+        this.seatRepository = seatRepository;
         this.mailSender = mailSender;
     }
 
@@ -137,16 +142,34 @@ public class BookingService {
      */
     @Transactional
     public Booking saveBooking(BookingDTO dto) {
+        Bus bus = busRepository.findById(dto.getBusId())
+                .orElseThrow(() -> new RuntimeException("Bus not found"));
+
+        if (bus.getArrivalTime() == null || bus.getDepartureTime() == null) {
+            throw new IllegalStateException("Bus schedule incomplete");
+        }
+
         Booking booking = new Booking();
-        booking.setBusId(dto.getBusId());
+        booking.setBusId(bus.getId());
+        booking.setBusName(bus.getBusName());
+        booking.setFromCity(bus.getFromCity());
+        booking.setToCity(bus.getToCity());
+        booking.setDepartureTime(bus.getDepartureTime());
+        booking.setArrivalTime(bus.getArrivalTime());
+        booking.setDuration(bus.getDuration());
         booking.setBoardingPoint(dto.getBoardingPoint());
         booking.setDroppingPoint(dto.getDroppingPoint());
-        booking.setTravelDate(LocalDate.now());
+        booking.setTravelDate(bus.getDate() != null ? bus.getDate() : LocalDate.now());
 
-        // Save booking first
+        // ✅ Lookup seats by seat codes
+        List<Seat> seats = seatRepository.findByNumberIn(dto.getSeatCodes());
+        double totalAmount = seats.stream().mapToDouble(Seat::getPrice).sum();
+        booking.setTotalAmount(totalAmount);
+        booking.setPrice(totalAmount);
+
         Booking savedBooking = bookingRepository.save(booking);
 
-        // Convert and save passengers
+        // ✅ Map passengers to seat codes
         List<BookingRequest> passengers = dto.getPassengers().stream()
                 .map(p -> {
                     BookingRequest br = new BookingRequest();
@@ -154,16 +177,24 @@ public class BookingService {
                     br.setAge(p.getAge());
                     br.setPhone(p.getPhone());
                     br.setState(p.getState());
-                    br.setSeatId(p.getSeatId());
+                    br.setSeatCode(p.getSeatCode()); // use seatCode instead of seatId
                     br.setBooking(savedBooking);
                     return br;
                 }).collect(Collectors.toList());
 
         bookingRequestRepository.saveAll(passengers);
-
         savedBooking.setPassengers(passengers);
+
+        // Mark seats unavailable
+        seats.forEach(seat -> {
+            seat.setAvailable(false);
+            seatRepository.save(seat);
+        });
+
         return savedBooking;
     }
+
+
 
     /**
      * ✅ Generate Ticket PDF
@@ -178,13 +209,13 @@ public class BookingService {
         Font normalFont = new Font(Font.FontFamily.HELVETICA, 12);
 
         doc.add(new Paragraph("🚌 Bus Booking Confirmation", titleFont));
-        doc.add(new Paragraph("Booking ID: " + (booking.getBusId() != null ? booking.getBusId() : "N/A")));
+        doc.add(new Paragraph("Bus: " + booking.getBusId()));
         doc.add(new Paragraph("From: " + booking.getBoardingPoint() + " → To: " + booking.getDroppingPoint(), normalFont));
         doc.add(new Paragraph("Date: " + LocalDate.now(), normalFont));
         doc.add(new Paragraph("\nPassengers:", normalFont));
 
         for (BookingRequestDTO p : booking.getPassengers()) {
-            doc.add(new Paragraph("• " + p.getName() + " (" + p.getAge() + " yrs) - Seat " + p.getSeatId(), normalFont));
+            doc.add(new Paragraph("• " + p.getName() + " (" + p.getAge() + " yrs) - Seat " + p.getSeatCode(), normalFont));
             doc.add(new Paragraph("  Phone: " + p.getPhone() + ", State: " + p.getState(), normalFont));
         }
 
@@ -208,12 +239,8 @@ public class BookingService {
 
         helper.setTo(toEmail);
         helper.setSubject("Your Bus Booking Confirmation - " + booking.getBoardingPoint() + " → " + booking.getDroppingPoint());
-        helper.setText(
-                "Dear " + (booking.getPassengers().isEmpty() ? "Customer" : booking.getPassengers().get(0).getName()) + ",\n\n" +
-                        "Your booking from " + booking.getBoardingPoint() + " to " + booking.getDroppingPoint() + " is confirmed.\n" +
-                        "Please find your ticket attached below.\n\n" +
-                        "Thank you for choosing our service!\n\nHappy Journey!"
-        );
+        helper.setText("Dear " + (booking.getPassengers().isEmpty() ? "Customer" : booking.getPassengers().get(0).getName()) +
+                ",\n\nYour booking is confirmed. Please find your ticket attached.\n\nHappy Journey!");
 
         helper.addAttachment("Booking_Ticket.pdf", new ByteArrayResource(pdfBytes));
         mailSender.send(message);
@@ -222,7 +249,7 @@ public class BookingService {
     }
 
     /**
-     * ✅ (Optional) Send SMS notification (stub)
+     * ✅ Send SMS notification (stub)
      */
     public void sendBookingSms(String phone, BookingDTO booking) {
         if (phone == null || phone.isEmpty()) {
@@ -237,7 +264,4 @@ public class BookingService {
         System.out.println("📱 Sending SMS to " + phone + ": " + msg);
         // Integrate Twilio / Fast2SMS here
     }
-
-
 }
-
