@@ -11,6 +11,7 @@ import com.example.api.repository.BookingRepository;
 import com.example.api.repository.BusRepository;
 import com.example.api.repository.SeatRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -88,4 +89,43 @@ public class BusService {
     public void fallbackDeleteBus(Long id, Throwable t) {
         System.out.println("BusService fallbackDeleteBus triggered: " + t.getMessage());
     }
+
+
+    public List<Bus> filterBuses(String from,
+            String to,
+            LocalDate date,
+            String seatType,
+            Double minPrice,
+            Double maxPrice,
+            Double minRating,
+            String amenity) {
+
+List<Bus> buses;
+
+if (date != null) {
+buses = busRepository.findByFromCityAndToCityAndDate(from, to, date);
+} else {
+buses = busRepository.findByFromCityAndToCity(from, to);
+}
+
+return buses.stream()
+
+.filter(b -> seatType == null ||
+   (b.getSeatType() != null &&
+    b.getSeatType().equalsIgnoreCase(seatType)))
+
+.filter(b -> minPrice == null || b.getPrice() >= minPrice)
+
+.filter(b -> maxPrice == null || b.getPrice() <= maxPrice)
+
+.filter(b -> minRating == null || b.getRating() >= minRating)
+
+// ✅ FIXED for List<String>
+.filter(b -> amenity == null ||
+   (b.getAmenities() != null &&
+    b.getAmenities().stream()
+       .anyMatch(a -> a.equalsIgnoreCase(amenity))))
+
+.toList();
+}
 }

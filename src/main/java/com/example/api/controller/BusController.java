@@ -140,6 +140,7 @@ public class BusController {
             booking.setDepartureTime(bus.getDepartureTime());
             booking.setArrivalTime(bus.getArrivalTime());
             booking.setDuration(bus.getDuration());
+           
             booking.setTravelDate(bus.getDate() != null ? bus.getDate() : LocalDate.now());
 
             double totalAmount = seats.stream().mapToDouble(Seat::getPrice).sum();
@@ -187,4 +188,42 @@ public class BusController {
     public List<BusPoint> getAllPoints(@PathVariable Long busId) {
         return busPointService.getAllPoints(busId);
     }
+    
+    @GetMapping("/filter")
+    public ResponseEntity<List<Bus>> filterBuses(
+            @RequestParam String from,
+            @RequestParam String to,
+            @RequestParam(required = false) String date,
+            @RequestParam(required = false) String seatType,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) Double minRating,
+            @RequestParam(required = false) String amenity
+    ) {
+
+        try {
+            // ✅ safer date parsing
+            LocalDate parsedDate = (date != null && !date.trim().isEmpty())
+                    ? parseDateFlexible(date)
+                    : null;
+
+            // ✅ call service
+            List<Bus> buses = busService.filterBuses(
+                    from.trim(),
+                    to.trim(),
+                    parsedDate,
+                    seatType,
+                    minPrice,
+                    maxPrice,
+                    minRating,
+                    amenity
+            );
+
+            return ResponseEntity.ok(buses);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
 }

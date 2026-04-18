@@ -77,22 +77,22 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // ✅ Allowed origins (Angular frontend, Swagger UI, etc.)
+        //  Allowed origins (Angular frontend, Swagger UI, etc.)
         configuration.setAllowedOrigins(List.of(
             "http://localhost:4200",  // Angular dev server
             "http://localhost:8080"   // Swagger UI / Postman
         ));
 
-        // ✅ Allowed HTTP methods
+        //  Allowed HTTP methods
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        // ✅ Allow all headers
+        //  Allow all headers
         configuration.setAllowedHeaders(List.of("*"));
 
-        // ✅ Allow cookies and Authorization headers (if needed)
+        //  Allow cookies and Authorization headers (if needed)
         configuration.setAllowCredentials(true);
 
-        // ✅ Cache duration for preflight requests
+        //  Cache duration for preflight requests
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
