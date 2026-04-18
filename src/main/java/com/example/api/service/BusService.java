@@ -67,6 +67,7 @@ public class BusService {
 
         return savedBooking;
     }
+    
 
     // ---------------- Fallback Methods ----------------
     public List<Bus> fallbackGetAllBuses(Throwable t) {

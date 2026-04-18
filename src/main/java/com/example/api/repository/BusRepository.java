@@ -48,6 +48,7 @@ public interface BusRepository extends JpaRepository<Bus, Long> {
     List<Bus> findByRouteOrderByRating(@Param("from") String from,
                                        @Param("to") String to);
 
+    
 
     @Query("""
         SELECT b FROM Bus b

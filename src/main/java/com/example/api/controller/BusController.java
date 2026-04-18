@@ -188,6 +188,7 @@ public class BusController {
     public List<BusPoint> getAllPoints(@PathVariable Long busId) {
         return busPointService.getAllPoints(busId);
     }
+  
     
     @GetMapping("/filter")
     public ResponseEntity<List<Bus>> filterBuses(
