@@ -199,7 +199,7 @@ public class BusController {
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) Double minRating,
-            @RequestParam(required = false) String amenity
+            @RequestParam(required = false) String amenities
     ) {
 
         try {
@@ -217,7 +217,7 @@ public class BusController {
                     minPrice,
                     maxPrice,
                     minRating,
-                    amenity
+                    amenities
             );
 
             return ResponseEntity.ok(buses);

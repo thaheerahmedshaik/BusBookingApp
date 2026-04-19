@@ -3,7 +3,7 @@ package com.example.api.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "bus")
@@ -28,7 +28,6 @@ public class Bus {
     @Column(name = "arrival_time")
     private LocalDateTime arrivalTime;
 
-    // ✅ FIXED: renamed from durationMinutes → duration
     @Column(name = "duration")
     private String duration;
 
@@ -47,13 +46,9 @@ public class Bus {
     @Column(name = "rating")
     private double rating;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-        name = "bus_amenities",
-        joinColumns = @JoinColumn(name = "bus_id")
-    )
-    @Column(name = "amenity")
-    private List<String> amenities;
+    // ✅ FIX: Store as STRING (matches your DB)
+    @Column(name = "amenities")
+    private String amenities;
 
     // ================= CONSTRUCTORS =================
 
@@ -63,7 +58,8 @@ public class Bus {
                LocalDateTime departureTime, LocalDateTime arrivalTime,
                String duration, double price, LocalDate date,
                String seatType, String busType, double rating,
-               List<String> amenities) {
+               String amenities) {
+
         this.id = id;
         this.busName = busName;
         this.fromCity = fromCity;
@@ -177,11 +173,23 @@ public class Bus {
         this.rating = rating;
     }
 
-    public List<String> getAmenities() {
+    // 🔥 RAW STRING (optional if needed)
+    public String getAmenitiesRaw() {
         return amenities;
     }
 
-    public void setAmenities(List<String> amenities) {
+    public void setAmenities(String amenities) {
         this.amenities = amenities;
+    }
+
+    // ✅ MAIN FIX: Convert String → List<String>
+    public List<String> getAmenities() {
+        if (amenities == null || amenities.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return Arrays.stream(amenities.split(","))
+                     .map(String::trim)
+                     .toList();
     }
 }

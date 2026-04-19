@@ -12,6 +12,7 @@ import com.example.api.repository.BusRepository;
 import com.example.api.repository.SeatRepository;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -112,8 +113,8 @@ buses = busRepository.findByFromCityAndToCity(from, to);
 return buses.stream()
 
 .filter(b -> seatType == null ||
-   (b.getSeatType() != null &&
-    b.getSeatType().equalsIgnoreCase(seatType)))
+(b.getSeatType() != null &&
+b.getSeatType().equalsIgnoreCase(seatType)))
 
 .filter(b -> minPrice == null || b.getPrice() >= minPrice)
 
@@ -121,12 +122,21 @@ return buses.stream()
 
 .filter(b -> minRating == null || b.getRating() >= minRating)
 
-// ✅ FIXED for List<String>
-.filter(b -> amenity == null ||
-   (b.getAmenities() != null &&
-    b.getAmenities().stream()
-       .anyMatch(a -> a.equalsIgnoreCase(amenity))))
+// ✅ MULTI-AMENITY FILTER
+.filter(b -> {
+if (amenity == null || amenity.isEmpty()) return true;
 
-.toList();
+List<String> requested = Arrays.stream(amenity.split(","))
+                         .map(String::trim)
+                         .toList();
+
+return b.getAmenities() != null &&
+  requested.stream().allMatch(req ->
+      b.getAmenities().stream()
+          .anyMatch(a -> a.equalsIgnoreCase(req))
+  );
+})
+
+.toList(); // ✅ IMPORTANT
 }
 }

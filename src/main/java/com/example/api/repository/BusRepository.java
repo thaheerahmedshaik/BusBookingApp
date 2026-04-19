@@ -64,8 +64,12 @@ public interface BusRepository extends JpaRepository<Bus, Long> {
 
         AND (:minRating IS NULL OR CAST(b.rating as double) >= :minRating)
 
-        AND (:amenity IS NULL OR LOWER(b.amenities) LIKE LOWER(CONCAT('%', :amenity, '%')))
-    """)
+       AND (
+        :amenities IS NULL
+        OR LOWER(REPLACE(b.amenities, ' ', '')) 
+           LIKE LOWER(CONCAT('%', REPLACE(:amenities, ' ', ''), '%'))
+    )
+""")
     List<Bus> filterBuses(
             @Param("from") String from,
             @Param("to") String to,
@@ -74,6 +78,6 @@ public interface BusRepository extends JpaRepository<Bus, Long> {
             @Param("minPrice") Double minPrice,
             @Param("maxPrice") Double maxPrice,
             @Param("minRating") Double minRating,
-            @Param("amenity") String amenity
+            @Param("amenities") String amenities
     );
 }
