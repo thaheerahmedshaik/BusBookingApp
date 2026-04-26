@@ -2,7 +2,7 @@ trigger:
 - clean-production   # or main if you want
 
 pool:
-  vmImage: ubuntu-latest
+  name: default
 
 steps:
 
