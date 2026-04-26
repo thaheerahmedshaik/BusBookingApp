@@ -56,7 +56,7 @@ public class BookingController {
         // 5️ 作成した PDF をブラウザへ返し、ユーザーがダウンロードできるようにする
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=ticket_" + savedBooking.getId() + ".pdf") // ダウンロード名
+                        "attachment; filename=ticket_" + savedBooking.getBusId() + ".pdf") // ダウンロード名
                 .contentType(MediaType.APPLICATION_PDF) // PDF MIME Type
                 .body(pdfBytes); // PDF バイトデータ
 }

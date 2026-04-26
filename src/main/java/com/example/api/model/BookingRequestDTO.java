@@ -1,11 +1,9 @@
 package com.example.api.model;
 
-
-
 public class BookingRequestDTO {
 
     private Long busId;
-    private Long seatId;
+    private String seatCode;   // passenger’s chosen seat code like "A1"
     private String boardingPoint;
     private String droppingPoint;
 
@@ -16,10 +14,10 @@ public class BookingRequestDTO {
 
     public BookingRequestDTO() {}
 
-    public BookingRequestDTO(Long busId, Long seatId, String boardingPoint, String droppingPoint,
+    public BookingRequestDTO(Long busId, String seatCode, String boardingPoint, String droppingPoint,
                              String name, int age, String phone, String state) {
         this.busId = busId;
-        this.seatId = seatId;
+        this.seatCode = seatCode;
         this.boardingPoint = boardingPoint;
         this.droppingPoint = droppingPoint;
         this.name = name;
@@ -32,8 +30,8 @@ public class BookingRequestDTO {
     public Long getBusId() { return busId; }
     public void setBusId(Long busId) { this.busId = busId; }
 
-    public Long getSeatId() { return seatId; }
-    public void setSeatId(Long seatId) { this.seatId = seatId; }
+    public String getSeatCode() { return seatCode; }
+    public void setSeatCode(String seatCode) { this.seatCode = seatCode; }
 
     public String getBoardingPoint() { return boardingPoint; }
     public void setBoardingPoint(String boardingPoint) { this.boardingPoint = boardingPoint; }
@@ -55,8 +53,8 @@ public class BookingRequestDTO {
 
     @Override
     public String toString() {
-        return "BookingRequestDTO [busId=" + busId + ", seatId=" + seatId + ", boardingPoint=" + boardingPoint +
-               ", droppingPoint=" + droppingPoint + ", name=" + name + ", age=" + age +
-               ", phone=" + phone + ", state=" + state + "]";
+        return "BookingRequestDTO [busId=" + busId + ", seatCode=" + seatCode +
+               ", boardingPoint=" + boardingPoint + ", droppingPoint=" + droppingPoint +
+               ", name=" + name + ", age=" + age + ", phone=" + phone + ", state=" + state + "]";
     }
 }

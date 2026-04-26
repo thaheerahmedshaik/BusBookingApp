@@ -9,5 +9,9 @@ import com.example.api.model.Seat;
 
 @Repository
 public interface SeatRepository extends JpaRepository<Seat, Long> {
-    List<Seat> findByBusId(Long busId);
+
+	  List<Seat> findByBusId(Long busId);
+	    List<Seat> findByBusIdAndNumberIn(Long busId, List<String> numbers);
+	    List<Seat> findByNumberIn(List<String> numbers);
+	
 }

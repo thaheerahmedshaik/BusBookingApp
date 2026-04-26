@@ -17,7 +17,7 @@ public class Seat {
     private String type;
     private String deck;
     private double price;
-    private boolean available;
+    private boolean available=true;
 
     @ManyToOne
     @JoinColumn(name = "bus_id")

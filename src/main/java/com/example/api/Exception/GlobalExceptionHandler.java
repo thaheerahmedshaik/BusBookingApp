@@ -1,4 +1,4 @@
-package com.example.api.exception;
+package com.example.api.Exception;
 
 import com.example.api.model.ErrorResponse;
 import org.springframework.http.ResponseEntity;

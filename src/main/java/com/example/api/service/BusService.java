@@ -11,6 +11,8 @@ import com.example.api.repository.BookingRepository;
 import com.example.api.repository.BusRepository;
 import com.example.api.repository.SeatRepository;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -66,6 +68,7 @@ public class BusService {
 
         return savedBooking;
     }
+    
 
     // ---------------- Fallback Methods ----------------
     public List<Bus> fallbackGetAllBuses(Throwable t) {
@@ -88,4 +91,52 @@ public class BusService {
     public void fallbackDeleteBus(Long id, Throwable t) {
         System.out.println("BusService fallbackDeleteBus triggered: " + t.getMessage());
     }
+
+
+    public List<Bus> filterBuses(String from,
+            String to,
+            LocalDate date,
+            String seatType,
+            Double minPrice,
+            Double maxPrice,
+            Double minRating,
+            String amenity) {
+
+List<Bus> buses;
+
+if (date != null) {
+buses = busRepository.findByFromCityAndToCityAndDate(from, to, date);
+} else {
+buses = busRepository.findByFromCityAndToCity(from, to);
+}
+
+return buses.stream()
+
+.filter(b -> seatType == null ||
+(b.getSeatType() != null &&
+b.getSeatType().equalsIgnoreCase(seatType)))
+
+.filter(b -> minPrice == null || b.getPrice() >= minPrice)
+
+.filter(b -> maxPrice == null || b.getPrice() <= maxPrice)
+
+.filter(b -> minRating == null || b.getRating() >= minRating)
+
+// ✅ MULTI-AMENITY FILTER
+.filter(b -> {
+if (amenity == null || amenity.isEmpty()) return true;
+
+List<String> requested = Arrays.stream(amenity.split(","))
+                         .map(String::trim)
+                         .toList();
+
+return b.getAmenities() != null &&
+  requested.stream().allMatch(req ->
+      b.getAmenities().stream()
+          .anyMatch(a -> a.equalsIgnoreCase(req))
+  );
+})
+
+.toList(); // ✅ IMPORTANT
+}
 }
