@@ -39,7 +39,7 @@ steps:
 # =========================
 - task: AzureWebApp@1
   inputs:
-    azureSubscription: 'YOUR-SERVICE-CONNECTION'
+    azureSubscription: 'BusBookingApp-ServiceConnection'
     appType: 'webApp'
-    appName: 'YOUR-APP-SERVICE-NAME'
+    appName: 'BusBookingApp'
     package: '$(Build.ArtifactStagingDirectory)/*.jar'
