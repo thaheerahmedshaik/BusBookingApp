@@ -1,0 +1,45 @@
+trigger:
+- clean-production   # or main if you want
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+
+# =========================
+# 1. Build Spring Boot JAR
+# =========================
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'clean package -DskipTests'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.7'
+    publishJUnitResults: false
+
+# =========================
+# 2. Copy JAR to staging
+# =========================
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(System.DefaultWorkingDirectory)/target'
+    Contents: '*.jar'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+# =========================
+# 3. Publish Artifact
+# =========================
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+
+# =========================
+# 4. Deploy to Azure App Service
+# =========================
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'BusBookingApp-ServiceConnection'
+    appType: 'webApp'
+    appName: 'YOUR-APP-SERVICE-NAME'
+    package: '$(Build.ArtifactStagingDirectory)/*.jar'
