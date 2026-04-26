@@ -1,5 +1,5 @@
 trigger:
-- clean-production   # or main if you want
+- main   # or main if you want
 
 pool:
   vmImage: ubuntu-latest
