@@ -81,7 +81,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of(
             "http://localhost:4200",  // Angular dev server
             "http://localhost:8080",
-            "https://lemon-forest-0051cc5007.azurestaticapps.net"// Swagger UI / Postman
+            "https://lemon-forest-0051cc500.7.azurestaticapps.net"// Swagger UI / Postman
         ));
 
         //  Allowed HTTP methods

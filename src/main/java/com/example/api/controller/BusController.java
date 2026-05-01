@@ -25,7 +25,7 @@ import java.util.List;
 @RequestMapping("/buses")
 @CrossOrigin(origins = {
 	    "http://localhost:4200",
-	    "https://lemon-forest-0051cc5007.azurestaticapps.net"
+	    "https://lemon-forest-0051cc500.7.azurestaticapps.net"
 	}) // // allow Angular frontend
 @Tag(name = "Bus Controller", description = "Operations related to buses")
 public class BusController {

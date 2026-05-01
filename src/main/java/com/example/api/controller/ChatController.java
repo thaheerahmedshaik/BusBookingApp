@@ -12,7 +12,7 @@ import java.util.Map;
 @RequestMapping("/api/chat")
 @CrossOrigin(origins = {
 	    "http://localhost:4200",
-	    "https://lemon-forest-0051cc5007.azurestaticapps.net"
+	    "https://lemon-forest-0051cc500.7.azurestaticapps.net"
 	}) // // allow Angular
 public class ChatController {
 

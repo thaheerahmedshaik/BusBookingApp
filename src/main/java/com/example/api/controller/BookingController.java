@@ -16,7 +16,7 @@ import com.example.api.service.BookingService;
 
 @CrossOrigin(origins = {
 	    "http://localhost:4200",
-	    "https://lemon-forest-0051cc5007.azurestaticapps.net"
+	    "https://lemon-forest-0051cc500.7.azurestaticapps.net"
 	}) // // Angular からのアクセスを許可
 public class BookingController {
 
