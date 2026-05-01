@@ -38,6 +38,8 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS
             .csrf(csrf -> csrf.disable()) // Disable CSRF (safe for REST APIs)
             .authorizeHttpRequests(authz -> authz
+            		
+            		 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // ✅ Public endpoints (no authentication required)
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/chat/**").permitAll()
