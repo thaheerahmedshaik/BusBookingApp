@@ -23,7 +23,10 @@ import com.example.api.repository.UserRepository;
 @RestController
 @RequestMapping("/api/auth")
 
-@CrossOrigin(origins = "http://localhost:4200") // Angular からのアクセスを許可
+@CrossOrigin(origins = {
+	    "http://localhost:4200",
+	    "https://lemon-forest-0051cc5007.azurestaticapps.net"
+	}) // Angular からのアクセスを許可
 public class AuthController {
 
     @Autowired

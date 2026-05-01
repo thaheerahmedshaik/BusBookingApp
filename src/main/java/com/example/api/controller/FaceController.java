@@ -6,7 +6,10 @@ import org.springframework.web.bind.annotation.*;
 import com.example.api.service.AzureFaceService;
 
 @RestController
-@RequestMapping("/api/face")
+@CrossOrigin(origins = {
+	    "http://localhost:4200",
+	    "https://lemon-forest-0051cc5007.azurestaticapps.net"
+	}) //
 public class FaceController {
 
     @Autowired

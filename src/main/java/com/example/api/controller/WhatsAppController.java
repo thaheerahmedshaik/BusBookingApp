@@ -16,7 +16,10 @@ import com.example.api.service.WhatsAppService;
 
 @RestController
 @RequestMapping("/api/whatsapp")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {
+	    "http://localhost:4200",
+	    "https://lemon-forest-0051cc5007.azurestaticapps.net"
+	}) //
 public class WhatsAppController {
 
     private final WhatsAppService whatsAppService;
